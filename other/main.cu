@@ -5,6 +5,7 @@
 #include "kernel.cuh"
 #include <cuda_runtime.h>
 #include <fstream>
+#include <iomanip> 
 #include <iostream>
 #include <random>
 #include <string>
@@ -32,7 +33,12 @@ load_search_space_from_file(const std::string &filename) {
   KernelConfig config;
   while (infile >> config.TILE_M >> config.TILE_N >> config.TILE_K >>
          config.BLOCK_DIM_X >> config.BLOCK_DIM_Y) {
-    space.push_back(config);
+    if (config.isValid()) {
+      space.push_back(config);
+    } else {
+      std::cerr << "Warning: Invalid configuration skipped: "
+                << config.toString() << std::endl;
+    }
   }
   std::cout << "Loaded a search space of " << space.size()
             << " valid configurations from " << filename << "." << std::endl;
