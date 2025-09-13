@@ -1,3 +1,4 @@
+
 #pragma once
 #include "KernelConfig.h"
 #include "kernel.cuh"
@@ -9,40 +10,46 @@
 void launch_kernel_with_config(const KernelConfig &config, float *d_C,
                                const float *d_A, const float *d_B, int M, int N,
                                int K) {
-  dim3 blockDim(config.BLOCK_DIM_X, config.BLOCK_DIM_Y);
-  dim3 gridDim((N + config.TILE_N - 1) / config.TILE_N,
-               (M + config.TILE_M - 1) / config.TILE_M);
-  size_t shared_size = (static_cast<size_t>(config.TILE_M) * config.TILE_K +
-                        static_cast<size_t>(config.TILE_K) * config.TILE_N) *
-                       sizeof(float);
-  if (config.TILE_M == 16 && config.TILE_N == 16 && config.TILE_K == 16 &&
-      config.BLOCK_DIM_X == 16 && config.BLOCK_DIM_Y == 16) {
-    matrix_multiply_kernel<16, 16, 16, 16, 16>
-        <<<gridDim, blockDim, shared_size>>>(d_C, d_A, d_B, M, N, K);
-  } else if (config.TILE_M == 32 && config.TILE_N == 32 &&
-             config.TILE_K == 32 && config.BLOCK_DIM_X == 32 &&
-             config.BLOCK_DIM_Y == 8) {
-    matrix_multiply_kernel<32, 32, 32, 32, 8>
-        <<<gridDim, blockDim, shared_size>>>(d_C, d_A, d_B, M, N, K);
-  } else if (config.TILE_M == 64 && config.TILE_N == 32 &&
-             config.TILE_K == 16 && config.BLOCK_DIM_X == 32 &&
-             config.BLOCK_DIM_Y == 16) {
-    matrix_multiply_kernel<64, 32, 16, 32, 16>
-        <<<gridDim, blockDim, shared_size>>>(d_C, d_A, d_B, M, N, K);
-  } else if (config.TILE_M == 32 && config.TILE_N == 64 &&
-             config.TILE_K == 16 && config.BLOCK_DIM_X == 64 &&
-             config.BLOCK_DIM_Y == 8) {
-    matrix_multiply_kernel<32, 64, 16, 64, 8>
-        <<<gridDim, blockDim, shared_size>>>(d_C, d_A, d_B, M, N, K);
-  } else if (config.TILE_M == 128 && config.TILE_N == 16 &&
-             config.TILE_K == 8 && config.BLOCK_DIM_X == 16 &&
-             config.BLOCK_DIM_Y == 32) {
-    matrix_multiply_kernel<128, 16, 8, 16, 32>
-        <<<gridDim, blockDim, shared_size>>>(d_C, d_A, d_B, M, N, K);
-  } else {
-    std::cerr << "FATAL: Unsupported kernel configuration: "
-              << config.toString() << std::endl;
-    exit(1);
-  }
-  CUDA_CHECK(cudaGetLastError());
+    dim3 blockDim(config.BLOCK_DIM_X, config.BLOCK_DIM_Y);
+    dim3 gridDim((N + config.TILE_N - 1) / config.TILE_N,
+                 (M + config.TILE_M - 1) / config.TILE_M);
+    size_t shared_size = (static_cast<size_t>(config.TILE_M) * config.TILE_K +
+                          static_cast<size_t>(config.TILE_K) * config.TILE_N) *
+                         sizeof(float);
+    if (config.TILE_M == 16 && config.TILE_N == 16 && config.TILE_K == 16 && config.BLOCK_DIM_X == 16 && config.BLOCK_DIM_Y == 16) {
+        matrix_multiply_kernel<16, 16, 16, 16, 16><<<gridDim, blockDim, shared_size>>>(d_C, d_A, d_B, M, N, K);
+    } else if (config.TILE_M == 32 && config.TILE_N == 32 && config.TILE_K == 32 && config.BLOCK_DIM_X == 32 && config.BLOCK_DIM_Y == 8) {
+        matrix_multiply_kernel<32, 32, 32, 32, 8><<<gridDim, blockDim, shared_size>>>(d_C, d_A, d_B, M, N, K);
+    } else if (config.TILE_M == 64 && config.TILE_N == 32 && config.TILE_K == 16 && config.BLOCK_DIM_X == 32 && config.BLOCK_DIM_Y == 16) {
+        matrix_multiply_kernel<64, 32, 16, 32, 16><<<gridDim, blockDim, shared_size>>>(d_C, d_A, d_B, M, N, K);
+    } else if (config.TILE_M == 32 && config.TILE_N == 64 && config.TILE_K == 16 && config.BLOCK_DIM_X == 64 && config.BLOCK_DIM_Y == 8) {
+        matrix_multiply_kernel<32, 64, 16, 64, 8><<<gridDim, blockDim, shared_size>>>(d_C, d_A, d_B, M, N, K);
+    } else if (config.TILE_M == 128 && config.TILE_N == 16 && config.TILE_K == 8 && config.BLOCK_DIM_X == 16 && config.BLOCK_DIM_Y == 32) {
+        matrix_multiply_kernel<128, 16, 8, 16, 32><<<gridDim, blockDim, shared_size>>>(d_C, d_A, d_B, M, N, K);
+    } else if (config.TILE_M == 64 && config.TILE_N == 64 && config.TILE_K == 16 && config.BLOCK_DIM_X == 16 && config.BLOCK_DIM_Y == 64) {
+        matrix_multiply_kernel<64, 64, 16, 16, 64><<<gridDim, blockDim, shared_size>>>(d_C, d_A, d_B, M, N, K);
+    } else if (config.TILE_M == 32 && config.TILE_N == 32 && config.TILE_K == 32 && config.BLOCK_DIM_X == 32 && config.BLOCK_DIM_Y == 32) {
+        matrix_multiply_kernel<32, 32, 32, 32, 32><<<gridDim, blockDim, shared_size>>>(d_C, d_A, d_B, M, N, K);
+    } else if (config.TILE_M == 16 && config.TILE_N == 32 && config.TILE_K == 16 && config.BLOCK_DIM_X == 32 && config.BLOCK_DIM_Y == 16) {
+        matrix_multiply_kernel<16, 32, 16, 32, 16><<<gridDim, blockDim, shared_size>>>(d_C, d_A, d_B, M, N, K);
+    } else if (config.TILE_M == 16 && config.TILE_N == 64 && config.TILE_K == 16 && config.BLOCK_DIM_X == 64 && config.BLOCK_DIM_Y == 16) {
+        matrix_multiply_kernel<16, 64, 16, 64, 16><<<gridDim, blockDim, shared_size>>>(d_C, d_A, d_B, M, N, K);
+    } else if (config.TILE_M == 64 && config.TILE_N == 32 && config.TILE_K == 16 && config.BLOCK_DIM_X == 16 && config.BLOCK_DIM_Y == 64) {
+        matrix_multiply_kernel<64, 32, 16, 16, 64><<<gridDim, blockDim, shared_size>>>(d_C, d_A, d_B, M, N, K);
+    } else if (config.TILE_M == 32 && config.TILE_N == 16 && config.TILE_K == 16 && config.BLOCK_DIM_X == 16 && config.BLOCK_DIM_Y == 32) {
+        matrix_multiply_kernel<32, 16, 16, 16, 32><<<gridDim, blockDim, shared_size>>>(d_C, d_A, d_B, M, N, K);
+    } else if (config.TILE_M == 16 && config.TILE_N == 16 && config.TILE_K == 8 && config.BLOCK_DIM_X == 16 && config.BLOCK_DIM_Y == 16) {
+        matrix_multiply_kernel<16, 16, 8, 16, 16><<<gridDim, blockDim, shared_size>>>(d_C, d_A, d_B, M, N, K);
+    } else if (config.TILE_M == 64 && config.TILE_N == 16 && config.TILE_K == 8 && config.BLOCK_DIM_X == 16 && config.BLOCK_DIM_Y == 64) {
+        matrix_multiply_kernel<64, 16, 8, 16, 64><<<gridDim, blockDim, shared_size>>>(d_C, d_A, d_B, M, N, K);
+    } else if (config.TILE_M == 32 && config.TILE_N == 64 && config.TILE_K == 8 && config.BLOCK_DIM_X == 32 && config.BLOCK_DIM_Y == 32) {
+        matrix_multiply_kernel<32, 64, 8, 32, 32><<<gridDim, blockDim, shared_size>>>(d_C, d_A, d_B, M, N, K);
+    } else if (config.TILE_M == 128 && config.TILE_N == 64 && config.TILE_K == 8 && config.BLOCK_DIM_X == 64 && config.BLOCK_DIM_Y == 16) {
+        matrix_multiply_kernel<128, 64, 8, 64, 16><<<gridDim, blockDim, shared_size>>>(d_C, d_A, d_B, M, N, K);
+    }
+    else {
+        std::cerr << "FATAL: Unsupported kernel configuration: " << config.toString() << std::endl;
+        exit(1);
+    }
+    CUDA_CHECK(cudaGetLastError());
 }

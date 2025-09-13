@@ -5,9 +5,12 @@ if(POLICY CMP0104)
 endif()
 find_package(CUDAToolkit REQUIRED)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
-set(CMAKE_CUDA_ARCHITECTURES 90)
+
+set(CMAKE_CUDA_ARCHITECTURES 89)  # Single-arch for Ada (SM 8.9)
 set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --expt-relaxed-constexpr")
 set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --use_fast_math")
+
+# Generate dispatcher header
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/Evaluator_dispatcher.h
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/generate_dispatcher.py

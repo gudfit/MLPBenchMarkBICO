@@ -1,12 +1,25 @@
+# generate_dispatcher.py
+
 CONFIGURATIONS = [
-    # TM, TN, TK, BX, BY
+    # Original 5
     (16, 16, 16, 16, 16),
-    (32, 32, 32, 32, 8),
+    (32, 32, 32, 32, 8),   # Note: BLOCK_DIM_X*Y <= 1024
     (64, 32, 16, 32, 16),
     (32, 64, 16, 64, 8),
     (128, 16, 8, 16, 32),
+    # Added 10 more (including failing one; selected for diversity/coverage from generator)
+    (64, 64, 16, 16, 64),  # The failing config
+    (32, 32, 32, 32, 32),  # Square block
+    (16, 32, 16, 32, 16),
+    (16, 64, 16, 64, 16),
+    (64, 32, 16, 16, 64),
+    (32, 16, 16, 16, 32),
+    (16, 16, 8, 16, 16),
+    (64, 16, 8, 16, 64),
+    (32, 64, 8, 32, 32),
+    (128, 64, 8, 64, 16), # Adjusted BY=16 to fit 64*16=1024
+    # Add more here if desired (e.g., from the full 60 list)
 ]
-
 
 def generate_header():
     header_content = """
@@ -28,12 +41,12 @@ void launch_kernel_with_config(const KernelConfig &config, float *d_C,
                           static_cast<size_t>(config.TILE_K) * config.TILE_N) *
                          sizeof(float);
 """
-
+    
     first = True
     for tm, tn, tk, bx, by in CONFIGURATIONS:
         condition = f"config.TILE_M == {tm} && config.TILE_N == {tn} && config.TILE_K == {tk} && config.BLOCK_DIM_X == {bx} && config.BLOCK_DIM_Y == {by}"
         launch = f"matrix_multiply_kernel<{tm}, {tn}, {tk}, {bx}, {by}><<<gridDim, blockDim, shared_size>>>(d_C, d_A, d_B, M, N, K);"
-
+        
         if first:
             header_content += f"    if ({condition}) {{\n        {launch}\n    }}"
             first = False
@@ -50,7 +63,6 @@ void launch_kernel_with_config(const KernelConfig &config, float *d_C,
 """
     with open("Evaluator_dispatcher.h", "w") as f:
         f.write(header_content)
-
 
 if __name__ == "__main__":
     generate_header()
