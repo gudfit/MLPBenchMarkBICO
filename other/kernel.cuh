@@ -1,4 +1,5 @@
 #pragma once
+
 #include <cuda_runtime.h>
 
 template <int TILE_M, int TILE_N, int TILE_K, int BLOCK_DIM_X, int BLOCK_DIM_Y>
@@ -35,16 +36,12 @@ __global__ void matrix_multiply_kernel(float *C, const float *A, const float *B,
       else
         Bs[load_row * TILE_N + load_col] = 0.0f;
     }
-
     __syncthreads();
-
     for (int k = 0; k < TILE_K; ++k)
       accumulator +=
           As[threadIdx.y * TILE_K + k] * Bs[k * TILE_N + threadIdx.x];
-
     __syncthreads();
   }
-
   if (c_row < M && c_col < N)
     C[c_row * N + c_col] = accumulator;
 }

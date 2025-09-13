@@ -10,7 +10,6 @@
       exit(EXIT_FAILURE);                                                      \
     }                                                                          \
   } while (0)
-
 #include "Evaluator_dispatcher.h"
 Evaluator::Evaluator(float *d_A_, const float *d_B_, float *d_C_, int M_,
                      int N_, int K_)
@@ -25,7 +24,6 @@ double Evaluator::evaluate(const KernelConfig &config) {
   const int num_runs = 100;
   for (int i = 0; i < num_runs; ++i)
     launch_kernel_with_config(config, d_C, d_A, d_B, M, N, K);
-
   CUDA_CHECK(cudaEventRecord(stop));
   CUDA_CHECK(cudaEventSynchronize(stop));
   float milliseconds = 0;
