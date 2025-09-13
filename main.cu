@@ -175,7 +175,7 @@ int main() {
   cudaEvent_t start, stop;
   CUDA_CHECK(cudaEventCreate(&start));
   CUDA_CHECK(cudaEventCreate(&stop));
-  float ms_baseline = 0, ms_fused = 0;
+  float ms_baseline = 0;
 
   dim3 warp_block(32, 1);
   dim3 grid_up((N_inter + WMMA_N - 1) / WMMA_N, (M + WMMA_M - 1) / WMMA_M);

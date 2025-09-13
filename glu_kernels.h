@@ -3,9 +3,6 @@
 // Define necessary macros
 #define __CUDA_INCLUDE_COMPILER_INTERNAL_HEADERS__
 #if defined(__CUDACC__)
-#define __CUDACC_VER_MAJOR__ __CUDACC_VER_MAJOR__
-#define __CUDACC_VER_MINOR__ __CUDACC_VER_MINOR__
-#define __CUDACC_VER_BUILD__ __CUDACC_VER_BUILD__
 #endif
 
 #include <cuda_fp16.h>
