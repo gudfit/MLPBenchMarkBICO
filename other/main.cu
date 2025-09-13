@@ -19,6 +19,7 @@
       exit(EXIT_FAILURE);                                                      \
     }                                                                          \
   } while (0)
+
 std::vector<KernelConfig>
 load_search_space_from_file(const std::string &filename) {
   std::vector<KernelConfig> space;
@@ -33,11 +34,11 @@ load_search_space_from_file(const std::string &filename) {
          config.BLOCK_DIM_X >> config.BLOCK_DIM_Y) {
     space.push_back(config);
   }
-
   std::cout << "Loaded a search space of " << space.size()
             << " valid configurations from " << filename << "." << std::endl;
   return space;
 }
+
 int main() {
   const int M = 1024;
   const int K = 4096;
@@ -65,20 +66,20 @@ int main() {
       load_search_space_from_file("configurations.txt");
   std::vector<KernelConfig> guided_search_space =
       predictive_search(full_search_space);
-
-  std::cout << "Predictive model has ranked the search space.\n";
-  std::cout << "Top 3 most promising candidates:\n";
-  for (int i = 0; i < 3 && i < guided_search_space.size(); ++i) {
+  std::cout << "Predictive model has ranked " << guided_search_space.size()
+            << " configurations.\n";
+  std::cout << "Top 5 most promising candidates:\n";
+  for (int i = 0; i < 5 && i < guided_search_space.size(); ++i) {
     std::cout << " #" << i + 1 << ": " << guided_search_space[i].toString()
-              << " (Score: " << calculate_reuse_score(guided_search_space[i])
-              << ")\n";
+              << " (Reuse Score: " << std::fixed << std::setprecision(2)
+              << calculate_reuse_score(guided_search_space[i]) << ")\n";
   }
   std::vector<KernelConfig> random_search_space = full_search_space;
   std::random_device rd;
   std::mt19937 g(rd());
   std::shuffle(random_search_space.begin(), random_search_space.end(), g);
   std::cout << "\n===== [Phase 2: Empirical Head-to-Head Exploration] =====\n";
-  int budget = 20; 
+  int budget = 20;
   Evaluator evaluator(d_A, d_B, d_C, M, N, K);
   std::cout << "\n--- [Running BICO-GUIDED Explorer] ---\n";
   BICOExplorer explorer_guided("GUIDED", guided_search_space, evaluator, false);

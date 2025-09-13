@@ -5,24 +5,32 @@ if(POLICY CMP0104)
 endif()
 find_package(CUDAToolkit REQUIRED)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
-set(CMAKE_CUDA_ARCHITECTURES 89) 
+set(CMAKE_CUDA_ARCHITECTURES 89)
 set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --expt-relaxed-constexpr")
 set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --use_fast_math")
+# Generate dispatcher header and configurations
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/Evaluator_dispatcher.h
            ${CMAKE_CURRENT_SOURCE_DIR}/configurations.txt
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/generate_dispatcher.py
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/generate_dispatcher.py
     COMMENT "Generating CUDA kernel dispatcher and configurations..."
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
-add_custom_target(GenerateDispatcher ALL DEPENDS Evaluator_dispatcher.h configurations.txt)
+add_custom_target(GenerateDispatcher ALL DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Evaluator_dispatcher.h ${CMAKE_CURRENT_SOURCE_DIR}/configurations.txt)
 add_executable(mlp_benchmark
     main.cu
     Evaluator.cu
     BICOExplorer.cu
-    Heuristic.h
 )
-target_sources(mlp_benchmark PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Evaluator_dispatcher.h)
+target_sources(mlp_benchmark PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/Evaluator_dispatcher.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/Heuristic.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/KernelConfig.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/Evaluator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/BICOExplorer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/kernel.cuh
+)
 add_dependencies(mlp_benchmark GenerateDispatcher)
 target_link_libraries(mlp_benchmark PRIVATE CUDA::cudart)
 set_property(TARGET mlp_benchmark PROPERTY CXX_STANDARD 17)

@@ -1,10 +1,11 @@
 #pragma once
-
 #include <cuda_runtime.h>
 
 template <int TILE_M, int TILE_N, int TILE_K, int BLOCK_DIM_X, int BLOCK_DIM_Y>
 __global__ void matrix_multiply_kernel(float *C, const float *A, const float *B,
                                        int M, int N, int K) {
+  static_assert(BLOCK_DIM_X >= TILE_N, "BLOCK_DIM_X must be at least TILE_N");
+  static_assert(BLOCK_DIM_Y >= TILE_M, "BLOCK_DIM_Y must be at least TILE_M");
   extern __shared__ float smem[];
   float *As = smem;
   float *Bs = smem + TILE_M * TILE_K;
