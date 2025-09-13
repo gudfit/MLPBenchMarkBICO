@@ -6,6 +6,7 @@
 #include <iostream>
 #include <limits>
 #include <random>
+#include <tuple>
 #include <vector>
 
 void verify_results(const std::vector<half> &ref, const std::vector<half> &res,
@@ -30,10 +31,21 @@ void verify_results(const std::vector<half> &ref, const std::vector<half> &res,
               << ")" << std::endl;
 }
 
-float run_kernel_with_params(int block_k, int num_warps, float smem_kb,
-                             float occupancy, const half *d_A,
-                             const half *d_W_up, const half *d_W_gate,
-                             half *d_gated_result, int M, int N, int K) {
+struct KernelParams {
+  int block_k;
+  int num_warps;
+  float smem_kb;
+  float occupancy;
+
+  KernelParams(int bk = 64, int nw = 4, float smem = 64.0f, float occ = 0.5f)
+      : block_k(bk), num_warps(nw), smem_kb(smem), occupancy(occ) {}
+};
+
+std::pair<float, bool>
+run_kernel_with_params(const KernelParams &params, const half *d_A,
+                       const half *d_W_up, const half *d_W_gate,
+                       half *d_gated_result, int M, int N, int K,
+                       half *d_W_down, half *d_output) {
   cudaEvent_t start, stop;
   CUDA_CHECK(cudaEventCreate(&start));
   CUDA_CHECK(cudaEventCreate(&stop));
@@ -42,13 +54,13 @@ float run_kernel_with_params(int block_k, int num_warps, float smem_kb,
   const size_t static_smem_bytes =
       2 * TILE_ELEMENTS * sizeof(float) + TILE_ELEMENTS * half_size;
 
-  int max_smem_elems = static_cast<int>(smem_kb * 1024 / half_size);
-  int wmma_elems = block_k * WMMA_N;
+  int max_smem_elems = static_cast<int>(params.smem_kb * 1024 / half_size);
+  int wmma_elems = params.block_k * WMMA_N;
   int available_elems = max_smem_elems - 2 * wmma_elems;
-  int effective_block_k = block_k;
+  int effective_block_k = params.block_k;
 
-  if (occupancy < 0.5f)
-    effective_block_k = std::min(block_k * 2, available_elems / WMMA_M);
+  if (params.occupancy < 0.5f)
+    effective_block_k = std::min(params.block_k * 2, available_elems / WMMA_M);
 
   size_t dynamic_smem_bytes =
       (static_cast<size_t>(WMMA_M) * effective_block_k +
@@ -64,45 +76,63 @@ float run_kernel_with_params(int block_k, int num_warps, float smem_kb,
   if (total_smem_bytes > static_cast<size_t>(prop.sharedMemPerBlock)) {
     CUDA_CHECK(cudaEventDestroy(start));
     CUDA_CHECK(cudaEventDestroy(stop));
-    return std::numeric_limits<float>::max();
+    return {std::numeric_limits<float>::max(), false};
   }
 
   dim3 grid_fused((N + WMMA_N - 1) / WMMA_N, (M + WMMA_M - 1) / WMMA_M);
-  dim3 block_size(32 * num_warps);
+  dim3 block_size(32 * params.num_warps);
   float latency_ms = 0;
 
   try {
     CUDA_CHECK(cudaDeviceSynchronize());
     CUDA_CHECK(cudaEventRecord(start));
 
-    if (block_k == 64 && num_warps == 2) {
+    if (params.block_k == 64 && params.num_warps == 2) {
       glu_fused_up_gate_swiglu_budget<64, 2>
           <<<grid_fused, block_size, dynamic_smem_bytes>>>(
               d_A, d_W_up, d_W_gate, d_gated_result, M, N, K,
-              static_cast<int>(smem_kb), occupancy);
-    } else if (block_k == 128 && num_warps == 4) {
+              static_cast<int>(params.smem_kb), params.occupancy);
+    } else if (params.block_k == 128 && params.num_warps == 4) {
       glu_fused_up_gate_swiglu_budget<128, 4>
           <<<grid_fused, block_size, dynamic_smem_bytes>>>(
               d_A, d_W_up, d_W_gate, d_gated_result, M, N, K,
-              static_cast<int>(smem_kb), occupancy);
+              static_cast<int>(params.smem_kb), params.occupancy);
     } else {
       glu_fused_up_gate_swiglu_budget<64, 4>
           <<<grid_fused, block_size, dynamic_smem_bytes>>>(
               d_A, d_W_up, d_W_gate, d_gated_result, M, N, K,
-              static_cast<int>(smem_kb), occupancy);
+              static_cast<int>(params.smem_kb), params.occupancy);
     }
 
     CUDA_CHECK(cudaEventRecord(stop));
     CUDA_CHECK(cudaEventSynchronize(stop));
     CUDA_CHECK(cudaEventElapsedTime(&latency_ms, start, stop));
+
+    dim3 grid_down((K + WMMA_K - 1) / WMMA_K, (M + WMMA_M - 1) / WMMA_M);
+    glu_kernel3_down_gemm<<<grid_down, dim3(32)>>>(d_gated_result, d_W_down,
+                                                   d_output, M, N, K);
+    CUDA_CHECK(cudaDeviceSynchronize());
   } catch (...) {
-    latency_ms = std::numeric_limits<float>::max();
+    CUDA_CHECK(cudaEventDestroy(start));
+    CUDA_CHECK(cudaEventDestroy(stop));
+    return {std::numeric_limits<float>::max(), false};
   }
 
   CUDA_CHECK(cudaEventDestroy(start));
   CUDA_CHECK(cudaEventDestroy(stop));
-  return latency_ms;
+  return {latency_ms, true};
 }
+
+struct KernelResult {
+  SearchConfig config;
+  KernelParams params;
+  float latency_ms;
+  bool valid;
+
+  KernelResult(SearchConfig cfg = SearchConfig(),
+               KernelParams p = KernelParams(), float lat = 0, bool v = true)
+      : config(cfg), params(p), latency_ms(lat), valid(v) {}
+};
 
 Evaluator createEvaluator(const half *d_A, const half *d_W_up,
                           const half *d_W_gate, half *d_gated_result, int M,
@@ -110,6 +140,8 @@ Evaluator createEvaluator(const half *d_A, const half *d_W_up,
   return [=](const SearchConfig &config) -> KernelResult {
     auto search_start = std::chrono::high_resolution_clock::now();
     float best_latency = std::numeric_limits<float>::max();
+    KernelParams best_params;
+    bool found_valid = false;
 
     std::mt19937 rng(std::random_device{}());
     std::uniform_int_distribution<int> block_k_dist(32, 128);
@@ -126,29 +158,26 @@ Evaluator createEvaluator(const half *d_A, const half *d_W_up,
       if (elapsed >= config.search_time_budget)
         break;
 
-      int block_k = block_k_dist(rng);
-      int num_warps = warps_dist(rng);
-      float smem_kb = smem_dist(rng);
-      float occupancy = occ_dist(rng);
+      KernelParams params(block_k_dist(rng), warps_dist(rng), smem_dist(rng),
+                          occ_dist(rng));
 
-      float latency =
-          run_kernel_with_params(block_k, num_warps, smem_kb, occupancy, d_A,
-                                 d_W_up, d_W_gate, d_gated_result, M, N, K);
+      auto [latency, valid] =
+          run_kernel_with_params(params, d_A, d_W_up, d_W_gate, d_gated_result,
+                                 M, N, K, d_W_down, d_output);
 
-      if (latency < best_latency)
+      if (valid && latency < best_latency) {
         best_latency = latency;
+        best_params = params;
+        found_valid = true;
+      }
 
       evaluations++;
-      dim3 grid_down((K + WMMA_K - 1) / WMMA_K, (M + WMMA_M - 1) / WMMA_M);
-      glu_kernel3_down_gemm<<<grid_down, dim3(32)>>>(d_gated_result, d_W_down,
-                                                     d_output, M, N, K);
     }
 
     std::cout << "Evaluated " << evaluations << " configurations in "
               << config.search_time_budget << " seconds" << std::endl;
 
-    return KernelResult(config, best_latency,
-                        best_latency < std::numeric_limits<float>::max());
+    return KernelResult(config, best_params, best_latency, found_valid);
   };
 }
 
@@ -226,21 +255,25 @@ int main() {
   explorer.exploreWithTimeBudget(10.0);
   KernelResult best_result = explorer.findBestConfig();
   std::cout << "Best configuration: " << best_result.config
-            << " with latency: " << best_result.latency_ms << " ms"
-            << std::endl;
+            << " with parameters: block_k=" << best_result.params.block_k
+            << ", num_warps=" << best_result.params.num_warps
+            << ", smem_kb=" << best_result.params.smem_kb
+            << ", occupancy=" << best_result.params.occupancy
+            << ", latency: " << best_result.latency_ms << " ms" << std::endl;
   std::cout << "\n--- Final Run with Best Configuration ---" << std::endl;
-  KernelResult final_result = evaluator(SearchConfig(1.0));
-  if (final_result.valid) {
-    std::cout << "Final latency: " << final_result.latency_ms << " ms"
-              << std::endl;
+  auto [final_latency, valid] = run_kernel_with_params(
+      best_result.params, d_A, d_W_up, d_W_gate, d_gated_result, M, N_inter,
+      K_hidden, d_W_down, d_output);
+  if (valid) {
+    std::cout << "Final latency: " << final_latency << " ms" << std::endl;
     CUDA_CHECK(cudaMemcpy(h_output_fused.data(), d_output,
                           M * K_hidden * sizeof(half), cudaMemcpyDeviceToHost));
     std::cout << "\n--- Verification ---" << std::endl;
     verify_results(h_output_baseline, h_output_fused, "Optimized vs. Baseline");
     std::cout << "\n--- Performance Summary ---" << std::endl;
-    if (final_result.latency_ms > 0)
+    if (final_latency > 0)
       std::cout << "Speedup from Optimization: "
-                << (ms_baseline / final_result.latency_ms) << "x" << std::endl;
+                << (ms_baseline / final_latency) << "x" << std::endl;
   } else {
     std::cout << "Best configuration is invalid!" << std::endl;
   }
