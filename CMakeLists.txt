@@ -1,21 +1,37 @@
 cmake_minimum_required(VERSION 3.18)
 project(glu_mlp_bico LANGUAGES CXX CUDA)
-
+if(POLICY CMP0104)
+  cmake_policy(SET CMP0104 NEW)
+endif()
 find_package(CUDAToolkit REQUIRED)
-
 set(CMAKE_CUDA_ARCHITECTURES 80)
 set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --expt-relaxed-constexpr")
-
-add_executable(mlp_benchmark main.cu)
-
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --use_fast_math")
+add_executable(mlp_benchmark
+    main.cu
+    glu_kernels.h
+    bico_config.h
+)
 target_link_libraries(mlp_benchmark PRIVATE CUDA::cudart)
 set_property(TARGET mlp_benchmark PROPERTY CXX_STANDARD 17)
 set_property(TARGET mlp_benchmark PROPERTY CUDA_STANDARD 17)
-
 target_compile_options(mlp_benchmark PRIVATE 
-    $<$<COMPILE_LANGUAGE:CUDA>:--use_fast_math>
+    $<$<COMPILE_LANGUAGE:CUDA>:
+        -Xcompiler=-Wall
+        -Xcompiler=-Wextra
+        --generate-line-info
+    >
 )
-
-message(STATUS "Set CUDA architecture to: ${CMAKE_CUDA_ARCHITECTURES}")
-message(STATUS "To build, run: rm -rf build && mkdir build && cd build && cmake .. && make")
-message(STATUS "To run, execute: ./mlp_benchmark")
+target_include_directories(mlp_benchmark PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+message(STATUS "CUDA architecture set to: ${CMAKE_CUDA_ARCHITECTURES}")
+message(STATUS "CUDA toolkit version: ${CUDAToolkit_VERSION}")
+message(STATUS "")
+message(STATUS "Build instructions:")
+message(STATUS "  mkdir -p build && cd build")
+message(STATUS "  cmake ..")
+message(STATUS "  make -j")
+message(STATUS "")
+message(STATUS "Run with:")
+message(STATUS "  ./mlp_benchmark")
