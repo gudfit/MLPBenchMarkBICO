@@ -256,7 +256,6 @@ __global__ void glu_fused_up_gate_swiglu_budget<64, 2>(
   constexpr int NUM_WARPS = 2;
   constexpr int THREADS_PER_BLOCK = 32 * NUM_WARPS;
   constexpr int BLOCK_K = 64;
-  constexpr int PART_M = WMMA_M / NUM_WARPS;
   extern __shared__ half smem[];
   half *sA = smem;
   const int max_smem_elems = (smem_budget_kb * 1024) / sizeof(half);
@@ -271,40 +270,42 @@ __global__ void glu_fused_up_gate_swiglu_budget<64, 2>(
   __shared__ float sh_up[TILE_ELEMENTS];
   __shared__ float sh_gate[TILE_ELEMENTS];
   __shared__ half sh_final[TILE_ELEMENTS];
+
   int warp_id = threadIdx.x / 32;
   int lane_id = threadIdx.x % 32;
-  nvcuda::wmma::fragment<nvcuda::wmma::matrix_a, PART_M, WMMA_K, WMMA_K, half,
+
+  // Use standard WMMA fragment sizes
+  nvcuda::wmma::fragment<nvcuda::wmma::matrix_a, WMMA_M, WMMA_K, WMMA_K, half,
                          nvcuda::wmma::row_major>
       a_frag;
   nvcuda::wmma::fragment<nvcuda::wmma::matrix_b, WMMA_K, WMMA_N, WMMA_K, half,
                          nvcuda::wmma::row_major>
       b_frag_up, b_frag_gate;
-  nvcuda::wmma::fragment<nvcuda::wmma::accumulator, PART_M, WMMA_N, WMMA_K,
+  nvcuda::wmma::fragment<nvcuda::wmma::accumulator, WMMA_M, WMMA_N, WMMA_K,
                          float>
       acc_up, acc_gate;
   nvcuda::wmma::fill_fragment(acc_up, 0.0f);
   nvcuda::wmma::fill_fragment(acc_gate, 0.0f);
+
   int block_row = blockIdx.y * WMMA_M;
   int block_col = blockIdx.x * WMMA_N;
   if (block_row >= M || block_col >= N)
     return;
 
-  int start_row = warp_id * PART_M;
   int k_increment = effective_block_k;
   if (target_occupancy > 0.7f)
     k_increment = max(WMMA_K, effective_block_k / 2);
 
   int tid = threadIdx.x;
   for (int bk = 0; bk < K; bk += k_increment) {
-    for (int row = 0; row < PART_M; ++row) {
-      int global_row = start_row + row;
-      for (int col = lane_id; col < k_increment; col += 32) {
-        if (block_row + global_row < M && bk + col < K)
-          sA[global_row * k_increment + col] =
-              A[(block_row + global_row) * K + bk + col];
-        else
-          sA[global_row * k_increment + col] = __float2half(0.0f);
-      }
+    // Loading logic remains the same
+    for (int i = tid; i < WMMA_M * k_increment; i += THREADS_PER_BLOCK) {
+      int row = i / k_increment;
+      int col = i % k_increment;
+      if (block_row + row < M && bk + col < K)
+        sA[i] = A[(block_row + row) * K + bk + col];
+      else
+        sA[i] = __float2half(0.0f);
     }
     int w_offset = bk * N + block_col;
     int w_num = k_increment * WMMA_N;
@@ -320,9 +321,9 @@ __global__ void glu_fused_up_gate_swiglu_budget<64, 2>(
       }
     }
     __syncthreads();
+
     for (int ki = 0; ki < k_increment; ki += WMMA_K) {
-      nvcuda::wmma::load_matrix_sync(a_frag, sA + start_row * k_increment + ki,
-                                     k_increment);
+      nvcuda::wmma::load_matrix_sync(a_frag, sA + ki, k_increment);
       nvcuda::wmma::load_matrix_sync(b_frag_up, sW_up + ki * WMMA_N, WMMA_N);
       nvcuda::wmma::load_matrix_sync(b_frag_gate, sW_gate + ki * WMMA_N,
                                      WMMA_N);
@@ -331,12 +332,14 @@ __global__ void glu_fused_up_gate_swiglu_budget<64, 2>(
     }
     __syncthreads();
   }
-  int row_offset = start_row * WMMA_N;
-  nvcuda::wmma::store_matrix_sync(sh_up + row_offset, acc_up, WMMA_N,
+
+  nvcuda::wmma::store_matrix_sync(sh_up, acc_up, WMMA_N,
                                   nvcuda::wmma::mem_row_major);
-  nvcuda::wmma::store_matrix_sync(sh_gate + row_offset, acc_gate, WMMA_N,
+  nvcuda::wmma::store_matrix_sync(sh_gate, acc_gate, WMMA_N,
                                   nvcuda::wmma::mem_row_major);
   __syncthreads();
+
+  // Element-wise operations
   for (int i = tid; i < TILE_ELEMENTS; i += THREADS_PER_BLOCK) {
     float gate_val = sh_gate[i];
     float up_val = sh_up[i];
@@ -345,11 +348,13 @@ __global__ void glu_fused_up_gate_swiglu_budget<64, 2>(
     sh_gate[i] = swish_gate * up_val;
   }
   __syncthreads();
+
   for (int i = tid; i < TILE_ELEMENTS; i += THREADS_PER_BLOCK) {
     int swizzled_i = swizzle_index(i / WMMA_N, i % WMMA_N, TILE_ELEMENTS);
     sh_final[swizzled_i] = __float2half(sh_gate[i]);
   }
   __syncthreads();
+
   nvcuda::wmma::fragment<nvcuda::wmma::accumulator, WMMA_M, WMMA_N, WMMA_K,
                          half>
       final_frag;

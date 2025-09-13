@@ -1,0 +1,921 @@
+<repo-to-text>
+Directory: MLPBenchMarkBICO
+
+Directory Structure:
+<directory_structure>
+.
+.
+├── ./bico_config.cpp
+├── ./bico_config.h
+├── ./CMakeLists.txt
+├── ./.git
+│   ├── ./.git/COMMIT_EDITMSG
+│   ├── ./.git/config
+│   ├── ./.git/description
+│   ├── ./.git/FETCH_HEAD
+│   ├── ./.git/HEAD
+│   ├── ./.git/hooks
+│   │   ├── ./.git/hooks/applypatch-msg.sample
+│   │   ├── ./.git/hooks/commit-msg.sample
+│   │   ├── ./.git/hooks/fsmonitor-watchman.sample
+│   │   ├── ./.git/hooks/post-update.sample
+│   │   ├── ./.git/hooks/pre-applypatch.sample
+│   │   ├── ./.git/hooks/pre-commit.sample
+│   │   ├── ./.git/hooks/pre-merge-commit.sample
+│   │   ├── ./.git/hooks/prepare-commit-msg.sample
+│   │   ├── ./.git/hooks/pre-push.sample
+│   │   ├── ./.git/hooks/pre-rebase.sample
+│   │   ├── ./.git/hooks/pre-receive.sample
+│   │   ├── ./.git/hooks/push-to-checkout.sample
+│   │   ├── ./.git/hooks/sendemail-validate.sample
+│   │   └── ./.git/hooks/update.sample
+│   ├── ./.git/index
+│   ├── ./.git/info
+│   │   └── ./.git/info/exclude
+│   ├── ./.git/logs
+│   │   ├── ./.git/logs/HEAD
+│   │   └── ./.git/logs/refs
+│   │       ├── ./.git/logs/refs/heads
+│   │       │   └── ./.git/logs/refs/heads/main
+│   │       └── ./.git/logs/refs/remotes
+│   │           └── ./.git/logs/refs/remotes/origin
+│   │               ├── ./.git/logs/refs/remotes/origin/HEAD
+│   │               └── ./.git/logs/refs/remotes/origin/main
+│   ├── ./.git/objects
+│   │   ├── ./.git/objects/24
+│   │   │   └── ./.git/objects/24/ee3b1eb27a13b00a1c9382d5669d9707358028
+│   │   ├── ./.git/objects/28
+│   │   │   └── ./.git/objects/28/71ea90d3e2121c62ffb908002d578efaadd55b
+│   │   ├── ./.git/objects/2a
+│   │   │   └── ./.git/objects/2a/f2ffea2d68b8a36df161ebca0a57bff01a3720
+│   │   ├── ./.git/objects/35
+│   │   │   └── ./.git/objects/35/2cae86a0ffd12b9a88ab4cb2b10cfcc79c309f
+│   │   ├── ./.git/objects/39
+│   │   │   ├── ./.git/objects/39/21b9ce9900fe2f69ca289f3692f8f463bbce24
+│   │   │   └── ./.git/objects/39/8564021b17604e7c4e51679d1e345f6e82c35e
+│   │   ├── ./.git/objects/42
+│   │   │   └── ./.git/objects/42/fd0132d8f94ff0b601016d537b8f08420d701f
+│   │   ├── ./.git/objects/46
+│   │   │   └── ./.git/objects/46/6a30c7d05f953bfc53a7a3ba799262206f578b
+│   │   ├── ./.git/objects/52
+│   │   │   └── ./.git/objects/52/a801f2d32c38601ad42b0efd53db99099588d3
+│   │   ├── ./.git/objects/5b
+│   │   │   └── ./.git/objects/5b/ca737afe21b1e508e538815710c28ef7e7c53f
+│   │   ├── ./.git/objects/5c
+│   │   │   └── ./.git/objects/5c/f5cf93aa6349b9b7acd04933cb3a6df3484ef7
+│   │   ├── ./.git/objects/72
+│   │   │   └── ./.git/objects/72/e8102b2bf13e5b1f9d01de0d6a599abf7d521e
+│   │   ├── ./.git/objects/74
+│   │   │   └── ./.git/objects/74/2e7143c1beb7940dd361e3b015a3fad31b3145
+│   │   ├── ./.git/objects/76
+│   │   │   └── ./.git/objects/76/543e22361ead49c445430b5e8201c47679da1b
+│   │   ├── ./.git/objects/7b
+│   │   │   └── ./.git/objects/7b/3ecd81f64276f5a50dc3d169d9af1dc85daad0
+│   │   ├── ./.git/objects/7c
+│   │   │   └── ./.git/objects/7c/f5ec77a96529e8f2a64f22f81b0a0bed782d16
+│   │   ├── ./.git/objects/80
+│   │   │   └── ./.git/objects/80/bbc93846e344790cd6b0b80e51d95dfead1da6
+│   │   ├── ./.git/objects/83
+│   │   │   └── ./.git/objects/83/f6c32c82491818cb77585a1108a4bf5204f906
+│   │   ├── ./.git/objects/88
+│   │   │   └── ./.git/objects/88/7774f392e18636519308f9a56b964462b565bd
+│   │   ├── ./.git/objects/8c
+│   │   │   └── ./.git/objects/8c/177dca1b72e1e8aab82ca5f98148d257564ff7
+│   │   ├── ./.git/objects/96
+│   │   │   └── ./.git/objects/96/78163b42deaf698a466680d3e5e4758965ca30
+│   │   ├── ./.git/objects/a5
+│   │   │   └── ./.git/objects/a5/8f282e701abc32aeca79fd7a901afe2d4fd711
+│   │   ├── ./.git/objects/b2
+│   │   │   └── ./.git/objects/b2/762048d96b8c37a914c603e47123250f73ea9d
+│   │   ├── ./.git/objects/ca
+│   │   │   └── ./.git/objects/ca/d0a229c5107ad1dacf5c14b0d4c16ea78ea7be
+│   │   ├── ./.git/objects/cb
+│   │   │   └── ./.git/objects/cb/203ea05f801a29d5d6e7eb390ad8503473eba9
+│   │   ├── ./.git/objects/e3
+│   │   │   └── ./.git/objects/e3/9fc5575a13cc739a14d71a4296d7cc1b4f708f
+│   │   ├── ./.git/objects/ed
+│   │   │   └── ./.git/objects/ed/30677e5cda8b10e9ea6fb4e9e1b4a30d7d7e7e
+│   │   ├── ./.git/objects/fc
+│   │   │   └── ./.git/objects/fc/b9439f0dc5f111130960a05c68543a747a165a
+│   │   ├── ./.git/objects/info
+│   │   └── ./.git/objects/pack
+│   │       ├── ./.git/objects/pack/pack-a6af547da6ab70ea66c61e0ddcb306a441406e19.idx
+│   │       ├── ./.git/objects/pack/pack-a6af547da6ab70ea66c61e0ddcb306a441406e19.pack
+│   │       └── ./.git/objects/pack/pack-a6af547da6ab70ea66c61e0ddcb306a441406e19.rev
+│   ├── ./.git/ORIG_HEAD
+│   ├── ./.git/packed-refs
+│   └── ./.git/refs
+│       ├── ./.git/refs/heads
+│       │   └── ./.git/refs/heads/main
+│       ├── ./.git/refs/remotes
+│       │   └── ./.git/refs/remotes/origin
+│       │       ├── ./.git/refs/remotes/origin/HEAD
+│       │       └── ./.git/refs/remotes/origin/main
+│       └── ./.git/refs/tags
+├── ./glu_kernels.h
+├── ./main.cu
+└── ./myfile.txt
+
+</directory_structure>
+
+<content full_path="bico_config.cpp">
+#include "bico_config.h"
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+
+void BICOExplorer::exploreFrontier(int max_iterations) {
+  results.clear();
+  frontier.clear();
+
+  std::vector<BudgetConfig> initial_configs = {
+      BudgetConfig(32, 0.25f), BudgetConfig(48, 0.4f), BudgetConfig(64, 0.3f),
+      BudgetConfig(96, 0.25f), BudgetConfig(128, 0.2f)};
+
+  for (const auto &config : initial_configs) {
+    KernelResult result = evaluator(config);
+    results.push_back(result);
+
+    if (result.valid)
+      std::cout << "Config " << config << " -> " << result.latency_ms << " ms"
+                << std::endl;
+    else
+      std::cout << "Config " << config << " -> Invalid" << std::endl;
+  }
+
+  for (size_t i = 0; i < results.size(); ++i) {
+    if (!results[i].valid)
+      continue;
+
+    bool is_pareto = true;
+    for (size_t j = 0; j < results.size(); ++j) {
+      if (i != j && results[j].valid &&
+          results[j].config <= results[i].config &&
+          results[j].latency_ms <= results[i].latency_ms) {
+        is_pareto = false;
+        break;
+      }
+    }
+
+    if (is_pareto)
+      frontier.push_back(results[i].config);
+  }
+
+  std::cout << "Pareto frontier found with " << frontier.size()
+            << " configurations" << std::endl;
+}
+
+BudgetConfig BICOExplorer::findBestConfig() const {
+  if (results.empty())
+    return BudgetConfig();
+
+  float best_latency = INFINITY;
+  BudgetConfig best_config;
+
+  for (const auto &result : results) {
+    if (result.valid && result.latency_ms < best_latency) {
+      best_latency = result.latency_ms;
+      best_config = result.config;
+    }
+  }
+
+  return best_config;
+}
+
+</content>
+
+<content full_path="CMakeLists.txt">
+cmake_minimum_required(VERSION 3.18)
+project(glu_mlp_bico LANGUAGES CXX CUDA)
+
+# Set policy to avoid warnings about CUDA_ARCHITECTURES
+if(POLICY CMP0104)
+  cmake_policy(SET CMP0104 NEW)
+endif()
+
+# Find CUDA toolkit
+find_package(CUDAToolkit REQUIRED)
+
+# Set CUDA architecture (RTX 5090 would likely be SM90 or similar)
+# For now, let's use a more recent architecture
+set(CMAKE_CUDA_ARCHITECTURES 90)
+
+# Enable extended constexpr support for CUDA
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --expt-relaxed-constexpr")
+
+# Enable fast math for better performance (trade precision for speed)
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --use_fast_math")
+
+# Add executable
+add_executable(mlp_benchmark
+    main.cu
+    bico_config.cpp
+    glu_kernels.h
+    bico_config.h
+)
+
+# Link against CUDA runtime
+target_link_libraries(mlp_benchmark PRIVATE CUDA::cudart)
+
+# Set C++ and CUDA standards
+set_property(TARGET mlp_benchmark PROPERTY CXX_STANDARD 17)
+set_property(TARGET mlp_benchmark PROPERTY CUDA_STANDARD 17)
+
+# Additional compiler flags for CUDA
+target_compile_options(mlp_benchmark PRIVATE 
+    $<$<COMPILE_LANGUAGE:CUDA>:
+        -Xcompiler=-Wall
+        -Xcompiler=-Wextra
+        --generate-line-info
+    >
+)
+
+# Add include directories if needed (for future headers)
+target_include_directories(mlp_benchmark PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+# Build instructions
+message(STATUS "CUDA architecture set to: ${CMAKE_CUDA_ARCHITECTURES}")
+message(STATUS "CUDA toolkit version: ${CUDAToolkit_VERSION}")
+message(STATUS "")
+message(STATUS "Build instructions:")
+message(STATUS "  mkdir -p build && cd build")
+message(STATUS "  cmake ..")
+message(STATUS "  make -j")
+message(STATUS "")
+message(STATUS "Run with:")
+message(STATUS "  ./mlp_benchmark")
+
+</content>
+
+<content full_path="bico_config.h">
+#pragma once
+
+#include <cuda_runtime.h>
+#include <functional>
+#include <iostream>
+#include <vector>
+
+struct BudgetConfig {
+  float smem_budget;
+  float occ_budget;
+
+  BudgetConfig(float smem = 0, float occ = 0)
+      : smem_budget(smem), occ_budget(occ) {}
+
+  // Comparison operators
+  bool operator<=(const BudgetConfig &other) const {
+    return smem_budget <= other.smem_budget && occ_budget <= other.occ_budget;
+  }
+
+  bool operator==(const BudgetConfig &other) const {
+    return smem_budget == other.smem_budget && occ_budget == other.occ_budget;
+  }
+
+  friend std::ostream &operator<<(std::ostream &os,
+                                  const BudgetConfig &config) {
+    os << "(" << config.smem_budget << " KB, " << config.occ_budget * 100
+       << "%)";
+    return os;
+  }
+};
+
+struct KernelResult {
+  BudgetConfig config;
+  float latency_ms;
+  bool valid;
+
+  KernelResult(BudgetConfig cfg = BudgetConfig(), float lat = 0, bool v = true)
+      : config(cfg), latency_ms(lat), valid(v) {}
+};
+
+using Evaluator = std::function<KernelResult(const BudgetConfig &)>;
+
+class BICOExplorer {
+private:
+  std::vector<BudgetConfig> frontier;
+  std::vector<KernelResult> results;
+  Evaluator evaluator;
+
+public:
+  BICOExplorer(Evaluator eval) : evaluator(eval) {}
+  void exploreFrontier(int max_iterations = 20);
+  const std::vector<BudgetConfig> &getFrontier() const { return frontier; }
+  const std::vector<KernelResult> &getResults() const { return results; }
+  BudgetConfig findBestConfig() const;
+};
+
+</content>
+
+<content full_path="myfile.txt">
+
+</content>
+
+<content full_path="glu_kernels.h">
+#pragma once
+#if defined(__CUDACC__)
+#define __CUDA_INCLUDE_COMPILER_INTERNAL_HEADERS__
+#endif
+#include <cuda_fp16.h>
+#include <mma.h>
+#define CUDA_CHECK(call)                                                       \
+  do {                                                                         \
+    cudaError_t err = call;                                                    \
+    if (err != cudaSuccess) {                                                  \
+      fprintf(stderr, "CUDA Error: %s:%d, %s\n", __FILE__, __LINE__,           \
+              cudaGetErrorString(err));                                        \
+      exit(EXIT_FAILURE);                                                      \
+    }                                                                          \
+  } while (0)
+constexpr int WMMA_M = 16;
+constexpr int WMMA_N = 16;
+constexpr int WMMA_K = 16;
+constexpr int TILE_ELEMENTS = WMMA_M * WMMA_N;
+__device__ __inline__ void coalesced_load(const half *src, half *dest,
+                                          int num_elements, int tid,
+                                          int num_threads) {
+  for (int i = tid; i < num_elements; i += num_threads) {
+    dest[i] = src[i];
+  }
+}
+__device__ __inline__ void coalesced_store(const half *src, half *dest,
+                                           int num_elements, int tid,
+                                           int num_threads) {
+  for (int i = tid; i < num_elements; i += num_threads) {
+    dest[i] = src[i];
+  }
+}
+__device__ __inline__ int swizzle_index(int x, int y, int width) {
+  return (y ^ x) % width;
+}
+// Baseline kernel 1: Up and Gate projection using simple WMMA (one warp per
+// tile)
+__global__ void glu_kernel1_up_gate_gemm(const half *A, const half *W_up,
+                                         const half *W_gate, half *up_proj,
+                                         half *gate_proj, int M, int N, int K) {
+  int tile_m = blockIdx.y * WMMA_M;
+  int tile_n = blockIdx.x * WMMA_N;
+  if (tile_m >= M || tile_n >= N)
+    return;
+  nvcuda::wmma::fragment<nvcuda::wmma::matrix_a, WMMA_M, WMMA_K, WMMA_K, half,
+                         nvcuda::wmma::row_major>
+      a_frag;
+  nvcuda::wmma::fragment<nvcuda::wmma::matrix_b, WMMA_K, WMMA_N, WMMA_K, half,
+                         nvcuda::wmma::row_major>
+      b_frag_up;
+  nvcuda::wmma::fragment<nvcuda::wmma::accumulator, WMMA_M, WMMA_N, WMMA_K,
+                         float>
+      acc_frag_up;
+  nvcuda::wmma::fill_fragment(acc_frag_up, 0.0f);
+  nvcuda::wmma::fragment<nvcuda::wmma::matrix_b, WMMA_K, WMMA_N, WMMA_K, half,
+                         nvcuda::wmma::row_major>
+      b_frag_gate;
+  nvcuda::wmma::fragment<nvcuda::wmma::accumulator, WMMA_M, WMMA_N, WMMA_K,
+                         float>
+      acc_frag_gate;
+  nvcuda::wmma::fill_fragment(acc_frag_gate, 0.0f);
+  __shared__ float sh_acc_up[TILE_ELEMENTS];
+  __shared__ float sh_acc_gate[TILE_ELEMENTS];
+  int num_tiles_k = (K + WMMA_K - 1) / WMMA_K;
+  for (int tile_k = 0; tile_k < num_tiles_k; ++tile_k) {
+    const half *a_tile = A + tile_m * K + tile_k * WMMA_K;
+    nvcuda::wmma::load_matrix_sync(a_frag, a_tile, K);
+    const half *b_up_tile = W_up + tile_k * WMMA_K * N + tile_n;
+    nvcuda::wmma::load_matrix_sync(b_frag_up, b_up_tile, N);
+    const half *b_gate_tile = W_gate + tile_k * WMMA_K * N + tile_n;
+    nvcuda::wmma::load_matrix_sync(b_frag_gate, b_gate_tile, N);
+    nvcuda::wmma::mma_sync(acc_frag_up, a_frag, b_frag_up, acc_frag_up);
+    nvcuda::wmma::mma_sync(acc_frag_gate, a_frag, b_frag_gate, acc_frag_gate);
+  }
+  nvcuda::wmma::store_matrix_sync(sh_acc_up, acc_frag_up, WMMA_N,
+                                  nvcuda::wmma::mem_row_major);
+  nvcuda::wmma::store_matrix_sync(sh_acc_gate, acc_frag_gate, WMMA_N,
+                                  nvcuda::wmma::mem_row_major);
+  __syncthreads();
+  int global_offset = tile_m * N + tile_n;
+  int tid = threadIdx.x;
+  for (int i = tid; i < TILE_ELEMENTS; i += blockDim.x) {
+    int r = i / WMMA_N;
+    int c = i % WMMA_N;
+    up_proj[global_offset + r * N + c] = __float2half(sh_acc_up[i]);
+    gate_proj[global_offset + r * N + c] = __float2half(sh_acc_gate[i]);
+  }
+}
+// Baseline kernel 2: Elementwise SwiGLU activation
+__global__ void glu_kernel2_elementwise_swiglu(const half *up_proj,
+                                               const half *gate_proj,
+                                               half *gated_result, int M,
+                                               int N) {
+  int total_elements = M * N;
+  int idx = blockIdx.x * blockDim.x + threadIdx.x;
+  if (idx < total_elements) {
+    float gate_val = __half2float(gate_proj[idx]);
+    float up_val = __half2float(up_proj[idx]);
+    float sigmoid_gate = 1.0f / (1.0f + expf(-gate_val));
+    float swish_gate = gate_val * sigmoid_gate;
+    gated_result[idx] = __float2half(swish_gate * up_val);
+  }
+}
+// Baseline kernel 3: Down projection using simple WMMA
+__global__ void glu_kernel3_down_gemm(const half *gated_result,
+                                      const half *W_down, half *final_output,
+                                      int M, int N, int K) {
+  int tile_m = blockIdx.y * WMMA_M;
+  int tile_n = blockIdx.x * WMMA_K;
+  if (tile_m >= M || tile_n >= K)
+    return;
+  nvcuda::wmma::fragment<nvcuda::wmma::matrix_a, WMMA_M, WMMA_K, WMMA_K, half,
+                         nvcuda::wmma::row_major>
+      a_frag;
+  nvcuda::wmma::fragment<nvcuda::wmma::matrix_b, WMMA_K, WMMA_K, WMMA_K, half,
+                         nvcuda::wmma::row_major>
+      b_frag;
+  nvcuda::wmma::fragment<nvcuda::wmma::accumulator, WMMA_M, WMMA_K, WMMA_K,
+                         float>
+      acc_frag;
+  nvcuda::wmma::fill_fragment(acc_frag, 0.0f);
+  __shared__ float sh_acc[TILE_ELEMENTS];
+  int num_tiles_k = (N + WMMA_K - 1) / WMMA_K;
+  for (int tile_k = 0; tile_k < num_tiles_k; ++tile_k) {
+    const half *a_tile = gated_result + tile_m * N + tile_k * WMMA_K;
+    nvcuda::wmma::load_matrix_sync(a_frag, a_tile, N);
+    const half *b_tile = W_down + tile_k * WMMA_K * K + tile_n;
+    nvcuda::wmma::load_matrix_sync(b_frag, b_tile, K);
+    nvcuda::wmma::mma_sync(acc_frag, a_frag, b_frag, acc_frag);
+  }
+  nvcuda::wmma::store_matrix_sync(sh_acc, acc_frag, WMMA_K,
+                                  nvcuda::wmma::mem_row_major);
+  __syncthreads();
+  int global_offset = tile_m * K + tile_n;
+  int tid = threadIdx.x;
+  for (int i = tid; i < TILE_ELEMENTS; i += blockDim.x) {
+    int r = i / WMMA_K;
+    int c = i % WMMA_K;
+    final_output[global_offset + r * K + c] = __float2half(sh_acc[i]);
+  }
+}
+// Budget-aware fused kernel: Up + Gate + SwiGLU with configurable shared memory
+// usage (general template unchanged from previous)
+template <int BLOCK_K, int NUM_WARPS>
+__global__ void glu_fused_up_gate_swiglu_budget(
+    const half *A, const half *W_up, const half *W_gate, half *gated_result,
+    int M, int N, int K, int smem_budget_kb, float target_occupancy) {
+  constexpr int THREADS_PER_BLOCK = 32 * NUM_WARPS;
+  extern __shared__ half smem[];
+  half *sA = smem;
+  const int max_smem_elems = (smem_budget_kb * 1024) / sizeof(half);
+  const int wmma_elems = BLOCK_K * WMMA_N;
+  const int available_elems = max_smem_elems - 2 * wmma_elems;
+  if (available_elems <= 0)
+    return;
+
+  int effective_block_k = BLOCK_K;
+  if (target_occupancy < 0.5f)
+    effective_block_k = min(BLOCK_K * 2, available_elems / WMMA_M);
+
+  half *sW_up = sA + WMMA_M * effective_block_k;
+  half *sW_gate = sW_up + effective_block_k * WMMA_N;
+  __shared__ float sh_up[TILE_ELEMENTS];
+  __shared__ float sh_gate[TILE_ELEMENTS];
+  __shared__ half sh_final[TILE_ELEMENTS];
+  nvcuda::wmma::fragment<nvcuda::wmma::accumulator, WMMA_M, WMMA_N, WMMA_K,
+                         float>
+      acc_up;
+  nvcuda::wmma::fragment<nvcuda::wmma::accumulator, WMMA_M, WMMA_N, WMMA_K,
+                         float>
+      acc_gate;
+  nvcuda::wmma::fill_fragment(acc_up, 0.0f);
+  nvcuda::wmma::fill_fragment(acc_gate, 0.0f);
+  int block_row = blockIdx.y * WMMA_M;
+  int block_col = blockIdx.x * WMMA_N;
+  if (block_row >= M || block_col >= N)
+    return;
+
+  int tid = threadIdx.x;
+  int k_increment = effective_block_k;
+  if (target_occupancy > 0.7f)
+    k_increment = max(WMMA_K, effective_block_k / 2);
+
+  for (int bk = 0; bk < K; bk += k_increment) {
+    for (int i = tid; i < WMMA_M * k_increment; i += THREADS_PER_BLOCK) {
+      int row = i / k_increment;
+      int col = i % k_increment;
+      if (block_row + row < M && bk + col < K)
+        sA[i] = A[(block_row + row) * K + bk + col];
+      else
+        sA[i] = __float2half(0.0f);
+    }
+    int w_offset = bk * N + block_col;
+    int w_num = k_increment * WMMA_N;
+    coalesced_load(W_up + w_offset, sW_up, w_num, tid, THREADS_PER_BLOCK);
+    coalesced_load(W_gate + w_offset, sW_gate, w_num, tid, THREADS_PER_BLOCK);
+    if (bk + k_increment > K || block_col + WMMA_N > N) {
+      for (int i = tid; i < w_num; i += THREADS_PER_BLOCK) {
+        int row = i / WMMA_N;
+        if (bk + row >= K || block_col + (i % WMMA_N) >= N) {
+          sW_up[i] = __float2half(0.0f);
+          sW_gate[i] = __float2half(0.0f);
+        }
+      }
+    }
+    __syncthreads();
+    for (int ki = 0; ki < k_increment; ki += WMMA_K) {
+      nvcuda::wmma::fragment<nvcuda::wmma::matrix_a, WMMA_M, WMMA_K, WMMA_K,
+                             half, nvcuda::wmma::row_major>
+          a_frag;
+      nvcuda::wmma::fragment<nvcuda::wmma::matrix_b, WMMA_K, WMMA_N, WMMA_K,
+                             half, nvcuda::wmma::row_major>
+          b_frag_up, b_frag_gate;
+      nvcuda::wmma::load_matrix_sync(a_frag, sA + ki, k_increment);
+      nvcuda::wmma::load_matrix_sync(b_frag_up, sW_up + ki * WMMA_N, WMMA_N);
+      nvcuda::wmma::load_matrix_sync(b_frag_gate, sW_gate + ki * WMMA_N,
+                                     WMMA_N);
+      nvcuda::wmma::mma_sync(acc_up, a_frag, b_frag_up, acc_up);
+      nvcuda::wmma::mma_sync(acc_gate, a_frag, b_frag_gate, acc_gate);
+    }
+    __syncthreads();
+  }
+  nvcuda::wmma::store_matrix_sync(sh_up, acc_up, WMMA_N,
+                                  nvcuda::wmma::mem_row_major);
+  nvcuda::wmma::store_matrix_sync(sh_gate, acc_gate, WMMA_N,
+                                  nvcuda::wmma::mem_row_major);
+  __syncthreads();
+  for (int i = tid; i < TILE_ELEMENTS; i += THREADS_PER_BLOCK) {
+    float gate_val = sh_gate[i];
+    float up_val = sh_up[i];
+    float sigmoid_gate = 1.0f / (1.0f + expf(-gate_val));
+    float swish_gate = gate_val * sigmoid_gate;
+    sh_gate[i] = swish_gate * up_val;
+  }
+  __syncthreads();
+  for (int i = tid; i < TILE_ELEMENTS; i += THREADS_PER_BLOCK) {
+    int swizzled_i = swizzle_index(i / WMMA_N, i % WMMA_N, TILE_ELEMENTS);
+    sh_final[swizzled_i] = __float2half(sh_gate[i]);
+  }
+  __syncthreads();
+  nvcuda::wmma::fragment<nvcuda::wmma::accumulator, WMMA_M, WMMA_N, WMMA_K,
+                         half>
+      final_frag;
+  nvcuda::wmma::load_matrix_sync(final_frag, sh_final, WMMA_N,
+                                 nvcuda::wmma::mem_row_major);
+  int out_offset = block_row * N + block_col;
+  nvcuda::wmma::store_matrix_sync(gated_result + out_offset, final_frag, N,
+                                  nvcuda::wmma::mem_row_major);
+}
+
+template <>
+__global__ void glu_fused_up_gate_swiglu_budget<64, 2>(
+    const half *A, const half *W_up, const half *W_gate, half *gated_result,
+    int M, int N, int K, int smem_budget_kb, float target_occupancy) {
+  constexpr int NUM_WARPS = 2;
+  constexpr int THREADS_PER_BLOCK = 32 * NUM_WARPS;
+  constexpr int BLOCK_K = 64;
+  constexpr int PART_M = WMMA_M / NUM_WARPS;
+  extern __shared__ half smem[];
+  half *sA = smem;
+  const int max_smem_elems = (smem_budget_kb * 1024) / sizeof(half);
+  const int wmma_elems = BLOCK_K * WMMA_N;
+  const int available_elems = max_smem_elems - 2 * wmma_elems;
+  int effective_block_k = BLOCK_K;
+  if (target_occupancy < 0.3f)
+    effective_block_k = min(BLOCK_K * 2, available_elems / WMMA_M);
+
+  half *sW_up = sA + WMMA_M * effective_block_k;
+  half *sW_gate = sW_up + effective_block_k * WMMA_N;
+  __shared__ float sh_up[TILE_ELEMENTS];
+  __shared__ float sh_gate[TILE_ELEMENTS];
+  __shared__ half sh_final[TILE_ELEMENTS];
+  int warp_id = threadIdx.x / 32;
+  int lane_id = threadIdx.x % 32;
+  nvcuda::wmma::fragment<nvcuda::wmma::matrix_a, PART_M, WMMA_K, WMMA_K, half,
+                         nvcuda::wmma::row_major>
+      a_frag;
+  nvcuda::wmma::fragment<nvcuda::wmma::matrix_b, WMMA_K, WMMA_N, WMMA_K, half,
+                         nvcuda::wmma::row_major>
+      b_frag_up, b_frag_gate;
+  nvcuda::wmma::fragment<nvcuda::wmma::accumulator, PART_M, WMMA_N, WMMA_K,
+                         float>
+      acc_up, acc_gate;
+  nvcuda::wmma::fill_fragment(acc_up, 0.0f);
+  nvcuda::wmma::fill_fragment(acc_gate, 0.0f);
+  int block_row = blockIdx.y * WMMA_M;
+  int block_col = blockIdx.x * WMMA_N;
+  if (block_row >= M || block_col >= N)
+    return;
+
+  int start_row = warp_id * PART_M;
+  int k_increment = effective_block_k;
+  if (target_occupancy > 0.7f)
+    k_increment = max(WMMA_K, effective_block_k / 2);
+
+  int tid = threadIdx.x;
+  for (int bk = 0; bk < K; bk += k_increment) {
+    for (int row = 0; row < PART_M; ++row) {
+      int global_row = start_row + row;
+      for (int col = lane_id; col < k_increment; col += 32) {
+        if (block_row + global_row < M && bk + col < K)
+          sA[global_row * k_increment + col] =
+              A[(block_row + global_row) * K + bk + col];
+        else
+          sA[global_row * k_increment + col] = __float2half(0.0f);
+      }
+    }
+    int w_offset = bk * N + block_col;
+    int w_num = k_increment * WMMA_N;
+    coalesced_load(W_up + w_offset, sW_up, w_num, tid, THREADS_PER_BLOCK);
+    coalesced_load(W_gate + w_offset, sW_gate, w_num, tid, THREADS_PER_BLOCK);
+    if (bk + k_increment > K || block_col + WMMA_N > N) {
+      for (int i = tid; i < w_num; i += THREADS_PER_BLOCK) {
+        int row = i / WMMA_N;
+        if (bk + row >= K || block_col + (i % WMMA_N) >= N) {
+          sW_up[i] = __float2half(0.0f);
+          sW_gate[i] = __float2half(0.0f);
+        }
+      }
+    }
+    __syncthreads();
+    for (int ki = 0; ki < k_increment; ki += WMMA_K) {
+      nvcuda::wmma::load_matrix_sync(a_frag, sA + start_row * k_increment + ki,
+                                     k_increment);
+      nvcuda::wmma::load_matrix_sync(b_frag_up, sW_up + ki * WMMA_N, WMMA_N);
+      nvcuda::wmma::load_matrix_sync(b_frag_gate, sW_gate + ki * WMMA_N,
+                                     WMMA_N);
+      nvcuda::wmma::mma_sync(acc_up, a_frag, b_frag_up, acc_up);
+      nvcuda::wmma::mma_sync(acc_gate, a_frag, b_frag_gate, acc_gate);
+    }
+    __syncthreads();
+  }
+  int row_offset = start_row * WMMA_N;
+  nvcuda::wmma::store_matrix_sync(sh_up + row_offset, acc_up, WMMA_N,
+                                  nvcuda::wmma::mem_row_major);
+  nvcuda::wmma::store_matrix_sync(sh_gate + row_offset, acc_gate, WMMA_N,
+                                  nvcuda::wmma::mem_row_major);
+  __syncthreads();
+  for (int i = tid; i < TILE_ELEMENTS; i += THREADS_PER_BLOCK) {
+    float gate_val = sh_gate[i];
+    float up_val = sh_up[i];
+    float sigmoid_gate = 1.0f / (1.0f + expf(-gate_val));
+    float swish_gate = gate_val * sigmoid_gate;
+    sh_gate[i] = swish_gate * up_val;
+  }
+  __syncthreads();
+  for (int i = tid; i < TILE_ELEMENTS; i += THREADS_PER_BLOCK) {
+    int swizzled_i = swizzle_index(i / WMMA_N, i % WMMA_N, TILE_ELEMENTS);
+    sh_final[swizzled_i] = __float2half(sh_gate[i]);
+  }
+  __syncthreads();
+  nvcuda::wmma::fragment<nvcuda::wmma::accumulator, WMMA_M, WMMA_N, WMMA_K,
+                         half>
+      final_frag;
+  nvcuda::wmma::load_matrix_sync(final_frag, sh_final, WMMA_N,
+                                 nvcuda::wmma::mem_row_major);
+  int out_offset = block_row * N + block_col;
+  nvcuda::wmma::store_matrix_sync(gated_result + out_offset, final_frag, N,
+                                  nvcuda::wmma::mem_row_major);
+}
+
+</content>
+
+<content full_path="main.cu">
+#include "bico_config.h"
+#include "glu_kernels.h"
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <limits>
+#include <random>
+#include <vector>
+
+// Helper function to verify results between reference and test implementations
+void verify_results(const std::vector<half> &ref, const std::vector<half> &res,
+                    const std::string &name) {
+  bool correct = true;
+  float max_err = 0.0f;
+  for (size_t i = 0; i < ref.size(); ++i) {
+    float r = __half2float(ref[i]);
+    float s = __half2float(res[i]);
+    float err = std::abs(r - s);
+    if (err > 1e-2f) {
+      correct = false;
+      std::cerr << "Verification FAILED for " << name << " at index " << i
+                << ". Ref: " << r << ", Res: " << s << " (err=" << err << ")"
+                << std::endl;
+      break;
+    }
+    max_err = std::max(max_err, err);
+  }
+  if (correct)
+    std::cout << "Verification PASSED for " << name << " (max err: " << max_err
+              << ")" << std::endl;
+}
+
+Evaluator createEvaluator(const half *d_A, const half *d_W_up,
+                          const half *d_W_gate, half *d_gated_result, int M,
+                          int N, int K, half *d_W_down, half *d_output) {
+  constexpr size_t half_size = sizeof(half);
+  constexpr size_t static_smem_bytes =
+      2 * TILE_ELEMENTS * sizeof(float) + TILE_ELEMENTS * half_size;
+  return [=](const BudgetConfig &config) -> KernelResult {
+    cudaEvent_t start, stop;
+    CUDA_CHECK(cudaEventCreate(&start));
+    CUDA_CHECK(cudaEventCreate(&stop));
+    int block_k = 64;
+    int num_warps = 4;
+    float smem_kb = config.smem_budget;
+    int max_smem_elems = static_cast<int>(smem_kb * 1024 / half_size);
+    int wmma_elems = block_k * WMMA_N;
+    int available_elems = max_smem_elems - 2 * wmma_elems;
+    int effective_block_k = block_k;
+    if (config.occ_budget < 0.5f)
+      effective_block_k = std::min(block_k * 2, available_elems / WMMA_M);
+
+    if (smem_kb <= 48 && config.occ_budget <= 0.4f) {
+      block_k = 64;
+      num_warps = 2;
+    } else if (smem_kb > 96 && config.occ_budget <= 0.3f) {
+      block_k = 128;
+      num_warps = 4;
+    } else {
+      block_k = 64;
+      num_warps = 4;
+    }
+    wmma_elems = block_k * WMMA_N;
+    available_elems = max_smem_elems - 2 * wmma_elems;
+    effective_block_k = block_k;
+    if (config.occ_budget < 0.5f)
+      effective_block_k =
+          std::min(block_k * 2, std::max(0, available_elems) / WMMA_M);
+
+    size_t dynamic_smem_bytes =
+        (static_cast<size_t>(WMMA_M) * effective_block_k +
+         2 * static_cast<size_t>(effective_block_k) * WMMA_N) *
+        half_size;
+    size_t total_smem_bytes = dynamic_smem_bytes + static_smem_bytes;
+
+    int dev_id;
+    cudaDeviceProp prop;
+    CUDA_CHECK(cudaGetDevice(&dev_id));
+    CUDA_CHECK(cudaGetDeviceProperties(&prop, dev_id));
+    if (total_smem_bytes > static_cast<size_t>(prop.sharedMemPerBlock)) {
+      CUDA_CHECK(cudaEventDestroy(start));
+      CUDA_CHECK(cudaEventDestroy(stop));
+      return KernelResult(config, 0, false);
+    }
+
+    dim3 grid_fused((N + WMMA_N - 1) / WMMA_N, (M + WMMA_M - 1) / WMMA_M);
+    dim3 block_size(32 * num_warps);
+    float latency_ms = 0;
+
+    try {
+      CUDA_CHECK(cudaDeviceSynchronize());
+      CUDA_CHECK(cudaEventRecord(start));
+      for (int i = 0; i < 5; ++i) {
+        if (smem_kb <= 48 && config.occ_budget <= 0.4f) {
+          glu_fused_up_gate_swiglu_budget<64, 2>
+              <<<grid_fused, block_size, dynamic_smem_bytes>>>(
+                  d_A, d_W_up, d_W_gate, d_gated_result, M, N, K,
+                  static_cast<int>(smem_kb), config.occ_budget);
+        } else if (smem_kb > 96 && config.occ_budget <= 0.3f) {
+          glu_fused_up_gate_swiglu_budget<128, 4>
+              <<<grid_fused, block_size, dynamic_smem_bytes>>>(
+                  d_A, d_W_up, d_W_gate, d_gated_result, M, N, K,
+                  static_cast<int>(smem_kb), config.occ_budget);
+        } else {
+          glu_fused_up_gate_swiglu_budget<64, 4>
+              <<<grid_fused, block_size, dynamic_smem_bytes>>>(
+                  d_A, d_W_up, d_W_gate, d_gated_result, M, N, K,
+                  static_cast<int>(smem_kb), config.occ_budget);
+        }
+      }
+      CUDA_CHECK(cudaEventRecord(stop));
+      CUDA_CHECK(cudaEventSynchronize(stop));
+      CUDA_CHECK(cudaEventElapsedTime(&latency_ms, start, stop));
+      latency_ms /= 5.0f;
+
+      dim3 grid_down((K + WMMA_K - 1) / WMMA_K, (M + WMMA_M - 1) / WMMA_M);
+      glu_kernel3_down_gemm<<<grid_down, dim3(32)>>>(d_gated_result, d_W_down,
+                                                     d_output, M, N, K);
+
+      CUDA_CHECK(cudaDeviceSynchronize());
+    } catch (...) {
+      CUDA_CHECK(cudaEventDestroy(start));
+      CUDA_CHECK(cudaEventDestroy(stop));
+      return KernelResult(config, 0, false);
+    }
+
+    CUDA_CHECK(cudaEventDestroy(start));
+    CUDA_CHECK(cudaEventDestroy(stop));
+    return KernelResult(config, latency_ms, true);
+  };
+}
+
+int main() {
+  const int M = 1024;
+  const int K_hidden = 4096;
+  const int N_inter = 12288;
+  std::cout << "Problem Size: A(" << M << "x" << K_hidden << ") @ W("
+            << K_hidden << "x" << N_inter << ") -> down (" << N_inter << "x"
+            << K_hidden << ")" << std::endl;
+  std::vector<half> h_A(M * K_hidden);
+  std::vector<half> h_W_up(K_hidden * N_inter);
+  std::vector<half> h_W_gate(K_hidden * N_inter);
+  std::vector<half> h_W_down(N_inter * K_hidden);
+  std::vector<half> h_output_baseline(M * K_hidden);
+  std::vector<half> h_output_fused(M * K_hidden);
+  std::mt19937 rng(1337);
+  std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
+  for (auto &val : h_A)
+    val = __float2half(dist(rng));
+  for (auto &val : h_W_up)
+    val = __float2half(dist(rng));
+  for (auto &val : h_W_gate)
+    val = __float2half(dist(rng));
+  for (auto &val : h_W_down)
+    val = __float2half(dist(rng));
+  half *d_A, *d_W_up, *d_W_gate, *d_W_down, *d_output;
+  half *d_up_proj, *d_gate_proj, *d_gated_result;
+  CUDA_CHECK(cudaMalloc(&d_A, M * K_hidden * sizeof(half)));
+  CUDA_CHECK(cudaMalloc(&d_W_up, K_hidden * N_inter * sizeof(half)));
+  CUDA_CHECK(cudaMalloc(&d_W_gate, K_hidden * N_inter * sizeof(half)));
+  CUDA_CHECK(cudaMalloc(&d_W_down, N_inter * K_hidden * sizeof(half)));
+  CUDA_CHECK(cudaMalloc(&d_output, M * K_hidden * sizeof(half)));
+  CUDA_CHECK(cudaMalloc(&d_up_proj, M * N_inter * sizeof(half)));
+  CUDA_CHECK(cudaMalloc(&d_gate_proj, M * N_inter * sizeof(half)));
+  CUDA_CHECK(cudaMalloc(&d_gated_result, M * N_inter * sizeof(half)));
+  CUDA_CHECK(cudaMemcpy(d_A, h_A.data(), M * K_hidden * sizeof(half),
+                        cudaMemcpyHostToDevice));
+  CUDA_CHECK(cudaMemcpy(d_W_up, h_W_up.data(),
+                        K_hidden * N_inter * sizeof(half),
+                        cudaMemcpyHostToDevice));
+  CUDA_CHECK(cudaMemcpy(d_W_gate, h_W_gate.data(),
+                        K_hidden * N_inter * sizeof(half),
+                        cudaMemcpyHostToDevice));
+  CUDA_CHECK(cudaMemcpy(d_W_down, h_W_down.data(),
+                        N_inter * K_hidden * sizeof(half),
+                        cudaMemcpyHostToDevice));
+  cudaEvent_t start, stop;
+  CUDA_CHECK(cudaEventCreate(&start));
+  CUDA_CHECK(cudaEventCreate(&stop));
+  float ms_baseline = 0;
+  dim3 warp_block(32, 1);
+  dim3 grid_up((N_inter + WMMA_N - 1) / WMMA_N, (M + WMMA_M - 1) / WMMA_M);
+  dim3 grid_elem((M * N_inter + 255) / 256);
+  dim3 block_elem(256);
+  dim3 grid_down((K_hidden + WMMA_K - 1) / WMMA_K, (M + WMMA_M - 1) / WMMA_M);
+  std::cout << "\n--- Running Baseline (3 Kernels) ---" << std::endl;
+  CUDA_CHECK(cudaEventRecord(start));
+  glu_kernel1_up_gate_gemm<<<grid_up, warp_block>>>(
+      d_A, d_W_up, d_W_gate, d_up_proj, d_gate_proj, M, N_inter, K_hidden);
+  glu_kernel2_elementwise_swiglu<<<grid_elem, block_elem>>>(
+      d_up_proj, d_gate_proj, d_gated_result, M, N_inter);
+  glu_kernel3_down_gemm<<<grid_down, warp_block>>>(
+      d_gated_result, d_W_down, d_output, M, N_inter, K_hidden);
+  CUDA_CHECK(cudaEventRecord(stop));
+  CUDA_CHECK(cudaEventSynchronize(stop));
+  CUDA_CHECK(cudaEventElapsedTime(&ms_baseline, start, stop));
+  std::cout << "Baseline Latency: " << ms_baseline << " ms" << std::endl;
+  CUDA_CHECK(cudaMemcpy(h_output_baseline.data(), d_output,
+                        M * K_hidden * sizeof(half), cudaMemcpyDeviceToHost));
+  auto evaluator = createEvaluator(d_A, d_W_up, d_W_gate, d_gated_result, M,
+                                   N_inter, K_hidden, d_W_down, d_output);
+  BICOExplorer explorer(evaluator);
+  std::cout << "\n--- Exploring Budget Frontier ---" << std::endl;
+  explorer.exploreFrontier();
+  BudgetConfig best_config = explorer.findBestConfig();
+  std::cout << "Best configuration: " << best_config << std::endl;
+  std::cout << "\n--- Final Run with Best Configuration ---" << std::endl;
+  KernelResult final_result = evaluator(best_config);
+
+  if (final_result.valid) {
+    std::cout << "Final latency: " << final_result.latency_ms << " ms"
+              << std::endl;
+    CUDA_CHECK(cudaMemcpy(h_output_fused.data(), d_output,
+                          M * K_hidden * sizeof(half), cudaMemcpyDeviceToHost));
+
+    std::cout << "\n--- Verification ---" << std::endl;
+    verify_results(h_output_baseline, h_output_fused, "Optimized vs. Baseline");
+    std::cout << "\n--- Performance Summary ---" << std::endl;
+    if (final_result.latency_ms > 0)
+      std::cout << "Speedup from Optimization: "
+                << (ms_baseline / final_result.latency_ms) << "x" << std::endl;
+  } else {
+    std::cout << "Best configuration is invalid!" << std::endl;
+  }
+  CUDA_CHECK(cudaFree(d_A));
+  CUDA_CHECK(cudaFree(d_W_up));
+  CUDA_CHECK(cudaFree(d_W_gate));
+  CUDA_CHECK(cudaFree(d_W_down));
+  CUDA_CHECK(cudaFree(d_output));
+  CUDA_CHECK(cudaFree(d_up_proj));
+  CUDA_CHECK(cudaFree(d_gate_proj));
+  CUDA_CHECK(cudaFree(d_gated_result));
+  CUDA_CHECK(cudaEventDestroy(start));
+  CUDA_CHECK(cudaEventDestroy(stop));
+
+  return 0;
+}
+
+</content>
+
+</repo-to-text>
