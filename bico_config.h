@@ -1,55 +1,49 @@
 #pragma once
 
+#include <chrono>
 #include <cuda_runtime.h>
 #include <functional>
 #include <iostream>
 #include <vector>
 
-struct BudgetConfig {
-  float smem_budget;
-  float occ_budget;
+struct SearchConfig {
+  double search_time_budget;
+  double reliability_threshold;
 
-  BudgetConfig(float smem = 0, float occ = 0)
-      : smem_budget(smem), occ_budget(occ) {}
+  SearchConfig(double time = 0, double reliability = 0.95)
+      : search_time_budget(time), reliability_threshold(reliability) {}
 
-  // Comparison operators
-  bool operator<=(const BudgetConfig &other) const {
-    return smem_budget <= other.smem_budget && occ_budget <= other.occ_budget;
-  }
-
-  bool operator==(const BudgetConfig &other) const {
-    return smem_budget == other.smem_budget && occ_budget == other.occ_budget;
+  bool operator<=(const SearchConfig &other) const {
+    return search_time_budget <= other.search_time_budget;
   }
 
   friend std::ostream &operator<<(std::ostream &os,
-                                  const BudgetConfig &config) {
-    os << "(" << config.smem_budget << " KB, " << config.occ_budget * 100
-       << "%)";
+                                  const SearchConfig &config) {
+    os << "(" << config.search_time_budget
+       << "s, p=" << config.reliability_threshold << ")";
     return os;
   }
 };
 
 struct KernelResult {
-  BudgetConfig config;
+  SearchConfig config;
   float latency_ms;
   bool valid;
 
-  KernelResult(BudgetConfig cfg = BudgetConfig(), float lat = 0, bool v = true)
+  KernelResult(SearchConfig cfg = SearchConfig(), float lat = 0, bool v = true)
       : config(cfg), latency_ms(lat), valid(v) {}
 };
 
-using Evaluator = std::function<KernelResult(const BudgetConfig &)>;
+using Evaluator = std::function<KernelResult(const SearchConfig &)>;
 
 class BICOExplorer {
 private:
-  std::vector<BudgetConfig> frontier;
   std::vector<KernelResult> results;
   Evaluator evaluator;
 
 public:
   BICOExplorer(Evaluator eval) : evaluator(eval) {}
-  void exploreFrontier(int max_iterations = 20);
-  const std::vector<BudgetConfig> &getFrontier() const { return frontier; }
+  void exploreWithTimeBudget(double max_time_seconds = 10.0);
   const std::vector<KernelResult> &getResults() const { return results; }
-  BudgetConfig findBestConfig() const;
+  KernelResult findBestConfig() const;
 };

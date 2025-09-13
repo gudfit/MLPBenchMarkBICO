@@ -1,62 +1,54 @@
 #include "bico_config.h"
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <iostream>
+#include <random>
 
-void BICOExplorer::exploreFrontier(int max_iterations) {
+void BICOExplorer::exploreWithTimeBudget(double max_time_seconds) {
   results.clear();
-  frontier.clear();
 
-  std::vector<BudgetConfig> initial_configs = {
-      BudgetConfig(32, 0.25f), BudgetConfig(48, 0.4f), BudgetConfig(64, 0.3f),
-      BudgetConfig(96, 0.25f), BudgetConfig(128, 0.2f)};
+  auto start_time = std::chrono::high_resolution_clock::now();
+  std::mt19937 rng(std::random_device{}());
+  std::uniform_real_distribution<float> dist(0.1f, 0.9f);
 
-  for (const auto &config : initial_configs) {
+  std::vector<double> time_budgets = {0.1, 0.5, 1.0,
+                                      2.0, 5.0, max_time_seconds};
+
+  for (double time_budget : time_budgets) {
+    SearchConfig config(time_budget);
     KernelResult result = evaluator(config);
     results.push_back(result);
 
-    if (result.valid)
-      std::cout << "Config " << config << " -> " << result.latency_ms << " ms"
-                << std::endl;
-    else
-      std::cout << "Config " << config << " -> Invalid" << std::endl;
-  }
+    auto current_time = std::chrono::high_resolution_clock::now();
+    double elapsed =
+        std::chrono::duration<double>(current_time - start_time).count();
 
-  for (size_t i = 0; i < results.size(); ++i) {
-    if (!results[i].valid)
-      continue;
+    if (elapsed >= max_time_seconds)
+      break;
 
-    bool is_pareto = true;
-    for (size_t j = 0; j < results.size(); ++j) {
-      if (i != j && results[j].valid &&
-          results[j].config <= results[i].config &&
-          results[j].latency_ms <= results[i].latency_ms) {
-        is_pareto = false;
-        break;
-      }
+    if (result.valid) {
+      std::cout << "Time budget " << time_budget << "s -> " << result.latency_ms
+                << " ms" << std::endl;
+    } else {
+      std::cout << "Time budget " << time_budget << "s -> Invalid" << std::endl;
     }
-
-    if (is_pareto)
-      frontier.push_back(results[i].config);
   }
-
-  std::cout << "Pareto frontier found with " << frontier.size()
-            << " configurations" << std::endl;
 }
 
-BudgetConfig BICOExplorer::findBestConfig() const {
+KernelResult BICOExplorer::findBestConfig() const {
   if (results.empty())
-    return BudgetConfig();
+    return KernelResult();
 
   float best_latency = INFINITY;
-  BudgetConfig best_config;
+  KernelResult best_result;
 
   for (const auto &result : results) {
     if (result.valid && result.latency_ms < best_latency) {
       best_latency = result.latency_ms;
-      best_config = result.config;
+      best_result = result;
     }
   }
 
-  return best_config;
+  return best_result;
 }
